@@ -14,7 +14,11 @@ userRouter.post("/register", async (req, res) => {
     } catch (err) {
       res.send(`error:${err}`);
     }
-  } else {
+    
+  }
+ 
+   
+  else {
     res.send("User Already Created");
   }
 });

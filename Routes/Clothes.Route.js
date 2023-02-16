@@ -3,7 +3,7 @@ const clothesProductRoute = express.Router();
 const { clothesmodel } = require("../Models/Clothes.model");
 clothesProductRoute.get("/clothes", async (req, res) => {
   if (req.query.category) {
-    console.log("ccccccccc");
+    console.log("category running");
     try {
       let categorydata = await clothesmodel.find({
         category: req.query.category,
@@ -13,7 +13,7 @@ clothesProductRoute.get("/clothes", async (req, res) => {
       res.send(err);
     }
   } else if (req.query.page && req.query.limit) {
-    console.log("lelooooo");
+    console.log("simple roduct page running");
     try {
       const { page, limit } = req.query;
       if (!page) {
@@ -30,6 +30,7 @@ clothesProductRoute.get("/clothes", async (req, res) => {
       res.send(`error:${err}`);
     }
   } else if (req.query._sort) {
+    console.log("sorting running");
     try {
       const sortBy = req.query._sort;
       // const order = req.query._order;
@@ -39,12 +40,25 @@ clothesProductRoute.get("/clothes", async (req, res) => {
         sortBy === "LTH" ? (data = 1) : (data = -1);
       }
       // console.log("i am data", data);
-      const sortdata = await clothesmodel.find({}).sort({ price: data });
+      sortBy === "disc"
+        ? (sortdata = await clothesmodel.find({}).sort({ discount: data }))
+        : (sortdata = await clothesmodel.find({}).sort({ price: data }));
       res.send(sortdata);
     } catch (err) {
       res.send(err);
     }
+  } else if (req.query.search) {
+    console.log("i ma searchhh running", req.query.search);
+    try {
+      let searchdata = await clothesmodel.find({
+        description: { $regex: `${req.query.search}`, $options: "i" },
+      });
+      res.send(searchdata);
+    } catch (err) {
+      res.send(`error:${err}`);
+    }
   } else {
+    console.log("product data running");
     try {
       let productdata = await clothesmodel.find({ _id: req.body });
       res.send(productdata);

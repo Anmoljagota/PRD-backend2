@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const registerSchema = mongoose.Schema(
   {
-    email: { type: String, required: true, min: 8, unique: true },
+    email: { type: String, required: true, min: 8, unique: true }
+   
   },
   {
     versionKey: false,

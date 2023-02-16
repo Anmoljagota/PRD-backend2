@@ -5,6 +5,7 @@ const { clothesProductRoute } = require("./Routes/Clothes.Route");
 const { userRouter } = require("./Routes/User.route");
 const { cartRoute } = require("./Routes/Cart.route");
 const { homeProductRoute } = require("./Routes/HomeProduct");
+const {detailsroute}=require("./Routes/UserDetails.route")
 const express = require("express");
 const cors = require("cors");
 const app = express();
@@ -15,6 +16,7 @@ app.use("/homeproduct", homeProductRoute);
 app.use("/fashion", clothesProductRoute);
 app.use("/", userRouter);
 app.use("/cartdata", cartRoute);
+app.use("/address",detailsroute)
 app.listen(process.env.PORT, async () => {
   try {
     await connection;
