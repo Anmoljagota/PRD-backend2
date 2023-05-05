@@ -3,9 +3,7 @@ const clothesProductRoute = express.Router();
 const { clothesmodel } = require("../Models/Clothes.model");
 clothesProductRoute.get("/clothes", async (req, res) => {
   if(req.query._sort && req.query.category){
-    console.log("sucess",req.query._sort,req.query.category)
     const sortBy = req.query._sort[0];
-    // const order = req.query._order;
     if (sortBy === "disc") {
       data = 1;
     } else {
@@ -24,7 +22,6 @@ clothesProductRoute.get("/clothes", async (req, res) => {
   }
 
   else if (req.query.category) {
-    console.log("category running");
     try {
       let categorydata = await clothesmodel.find({
         category: req.query.category,
@@ -34,7 +31,6 @@ clothesProductRoute.get("/clothes", async (req, res) => {
       res.send(err);
     }
   } else if (req.query.page && req.query.limit) {
-    console.log("simple product page running");
     try {
       const { page, limit } = req.query;
       if (!page) {
@@ -51,16 +47,13 @@ clothesProductRoute.get("/clothes", async (req, res) => {
       res.send(`error:${err}`);
     }
   } else if (req.query._sort) {
-    console.log("sorting running");
     try {
       const sortBy = req.query._sort[0];
-      // const order = req.query._order;
       if (sortBy === "disc") {
         data = 1;
       } else {
         sortBy === "LTH" ? (data = 1) : (data = -1);
       }
-      // console.log("i am data", data);
       sortBy === "disc"
         ? (sortdata = await clothesmodel.find({}).sort({ discount: data }))
         : (sortdata = await clothesmodel.find({}).sort({ price: data }));
@@ -69,7 +62,6 @@ clothesProductRoute.get("/clothes", async (req, res) => {
       res.send(err);
     }
   } else if (req.query.q) {
-    console.log("i ma searchhh running", req.query.search);
     try {
       let searchdata = await clothesmodel.find({
         description: { $regex: `${req.query.q}`, $options: "i" },
@@ -78,8 +70,17 @@ clothesProductRoute.get("/clothes", async (req, res) => {
     } catch (err) {
       res.send(`error:${err}`);
     }
-  } else {
-    console.log("product data running");
+  }
+    else if(req.query.allproducts){
+      console.log("hiiiii")
+      try {
+        let productdata = await clothesmodel.find({});
+        res.send(productdata);
+      } catch (err) {
+        res.send(err);
+      }
+    }
+   else{
     try {
       let productdata = await clothesmodel.find({ _id: req.body });
       res.send(productdata);
@@ -87,6 +88,7 @@ clothesProductRoute.get("/clothes", async (req, res) => {
       res.send(err);
     }
   }
+ 
 });
 
 clothesProductRoute.post("/clothes", async (req, res) => {
@@ -98,13 +100,24 @@ clothesProductRoute.post("/clothes", async (req, res) => {
       res.send(err);
     }
   } else {
+    console.log(req.body,"k")
     try {
       const PostData = new clothesmodel(req.body);
       await PostData.save();
-      res.send("data added");
+      res.send(PostData);
     } catch (err) {
       res.send(`err`);
     }
+  }
+});
+clothesProductRoute.delete("/:id", async (req, res) => {
+  console.log(req.params)
+  try {
+    const ID = req.params.id;
+    await clothesmodel.findOneAndDelete({ _id: ID });
+    res.send("data deleted");
+  } catch (err) {
+    res.send(err);
   }
 });
 module.exports = {
