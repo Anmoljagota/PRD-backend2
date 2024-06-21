@@ -1,8 +1,11 @@
 const nodemailer = require("nodemailer");
 
-const Email_Verification = (email,otp) => {
+const Email_Verification = (email, otp) => {
   const transporter = nodemailer.createTransport({
     service: "gmail",
+    host: process.env.SMTP_HOST,
+    port: process.env.SMTP_PORT,
+    secure: process.env.SMTP_PORT == 465,
     auth: {
       user: process.env.EMAIL,
       pass: process.env.EMAIL_PASSWORD,
